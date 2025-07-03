@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#00665E</headerColor>
+        <logo>LoanManagment</logo>
+        <logoVersion>1</logoVersion>
+        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+    </brand>
+    <description>A Salesforce application designed for financial institutions to streamline loan portfolio management with intelligent automation and real-time balance tracking.</description>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
+    <label>Loan Management System</label>
+    <navType>Standard</navType>
+    <tabs>Loan__c</tabs>
+    <tabs>Loan_Charge__c</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Loan_Management_System_UtilityBar</utilityBar>
+</CustomApplication>
