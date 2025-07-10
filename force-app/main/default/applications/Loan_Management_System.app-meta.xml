@@ -18,5 +18,4 @@
     <tabs>Loan__c</tabs>
     <tabs>Loan_Charge__c</tabs>
     <uiType>Lightning</uiType>
-    <utilityBar>Loan_Management_System_UtilityBar</utilityBar>
 </CustomApplication>
