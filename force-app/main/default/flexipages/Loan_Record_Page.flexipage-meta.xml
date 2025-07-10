@@ -61,6 +61,16 @@
                     <name>uiBehavior</name>
                     <value>required</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>required</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Date_Loan_Issued__c</fieldItem>
                 <identifier>RecordDate_Loan_Issued_cField</identifier>
             </fieldInstance>
@@ -79,10 +89,20 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Term__c</fieldItem>
-                <identifier>RecordTerm_cField</identifier>
+                <fieldItem>Record.Total_Charges_on_the_Loan__c</fieldItem>
+                <identifier>RecordTotal_Charges_on_the_Loan_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Balance_of_the_Loan__c</fieldItem>
+                <identifier>RecordBalance_of_the_Loan_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-f1d9dab9-5695-4221-841f-e6b3e67ad3e3</name>
@@ -93,10 +113,30 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Account__c</fieldItem>
+                <identifier>RecordAccount_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
                     <value>required</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Name</fieldItem>
-                <identifier>RecordNameField</identifier>
+                <fieldItem>Record.Term__c</fieldItem>
+                <identifier>RecordTerm_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Address__c</fieldItem>
+                <identifier>RecordAddress_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
