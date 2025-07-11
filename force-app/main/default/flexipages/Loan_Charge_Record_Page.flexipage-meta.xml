@@ -86,6 +86,16 @@
                 <identifier>RecordCharge_Type_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Processing_Order__c</fieldItem>
+                <identifier>RecordProcessing_Order__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-0e3013db-827b-42fa-a6ab-d0400db3befd</name>
         <type>Facet</type>
     </flexiPageRegions>

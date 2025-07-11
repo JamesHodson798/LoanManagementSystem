@@ -7,6 +7,11 @@
     <description>Full access to Loan Management System objects and features</description>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Loan_Charge__c.Processing_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Loan__c.Account__c</field>
         <readable>true</readable>
     </fieldPermissions>

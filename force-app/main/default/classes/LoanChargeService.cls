@@ -5,8 +5,33 @@ public with sharing class LoanChargeService {
     
     private static final String RELEASE_CHARGE_TYPE = 'Release Charge';
     private static final String ADMIN_FEE_TYPE = 'Admin Fee';
+    private static final String INTEREST_CHARGE_TYPE = 'Interest Charge';
+    private static final String LEGAL_FEE_TYPE = 'Legal Fee';
     private static final Decimal RELEASE_CHARGE_AMOUNT = 500.00;
     private static final Decimal ADMIN_FEE_AMOUNT = 300.00;
+    
+    // Processing order priorities (lower number = higher priority)
+    private static final Map<String, Integer> CHARGE_TYPE_PRIORITY = new Map<String, Integer>{
+        ADMIN_FEE_TYPE => 1,
+        LEGAL_FEE_TYPE => 2,
+        INTEREST_CHARGE_TYPE => 3,
+        RELEASE_CHARGE_TYPE => 4
+    };
+    
+    /**
+     * @description Assigns processing order to charges based on charge type
+     * @param charges List of loan charges to assign processing order
+     */
+    public static void assignProcessingOrder(List<Loan_Charge__c> charges) {
+        for (Loan_Charge__c charge : charges) {
+            if (CHARGE_TYPE_PRIORITY.containsKey(charge.Charge_Type__c)) {
+                charge.Processing_Order__c = CHARGE_TYPE_PRIORITY.get(charge.Charge_Type__c);
+            } else {
+                // Default priority for unknown charge types
+                charge.Processing_Order__c = 99;
+            }
+        }
+    }
     
     /**
      * @description Creates release charges for new loans
@@ -23,7 +48,8 @@ public with sharing class LoanChargeService {
                     Loan__c = loan.Id,
                     Charge_Type__c = RELEASE_CHARGE_TYPE,
                     Amount__c = RELEASE_CHARGE_AMOUNT,
-                    Date__c = releaseDate
+                    Date__c = releaseDate,
+                    Processing_Order__c = CHARGE_TYPE_PRIORITY.get(RELEASE_CHARGE_TYPE)
                 );
                 releaseCharges.add(releaseCharge);
             }
@@ -75,12 +101,13 @@ public with sharing class LoanChargeService {
                 chargesToUpdate.add(releaseCharge);
             }
             
-            // Create admin fee
+            // Create admin fee with proper processing order
             Loan_Charge__c adminFee = new Loan_Charge__c(
                 Loan__c = loan.Id,
                 Charge_Type__c = ADMIN_FEE_TYPE,
                 Amount__c = ADMIN_FEE_AMOUNT,
-                Date__c = Date.today()
+                Date__c = Date.today(),
+                Processing_Order__c = CHARGE_TYPE_PRIORITY.get(ADMIN_FEE_TYPE)
             );
             adminFeesToInsert.add(adminFee);
         }

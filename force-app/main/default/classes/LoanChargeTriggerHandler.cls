@@ -10,7 +10,33 @@ public with sharing class LoanChargeTriggerHandler {
      * @param newCharges List of newly inserted Loan Charge records
      */
     public static void handleBeforeInsert(List<Loan_Charge__c> newCharges) {
+        // Assign processing order based on charge type
+        LoanChargeService.assignProcessingOrder(newCharges);
+        
+        // Validate release charge constraints
         LoanChargeService.validateReleaseCharges(newCharges);
+    }
+    
+    /**
+     * @description Handles before update operations
+     * @param newCharges List of updated Loan Charge records
+     * @param oldChargeMap Map of old Loan Charge records
+     */
+    public static void handleBeforeUpdate(List<Loan_Charge__c> newCharges, Map<Id, Loan_Charge__c> oldChargeMap) {
+        List<Loan_Charge__c> chargesWithTypeChanges = new List<Loan_Charge__c>();
+        
+        // Check if charge type changed (which would affect processing order)
+        for (Loan_Charge__c charge : newCharges) {
+            Loan_Charge__c oldCharge = oldChargeMap.get(charge.Id);
+            if (charge.Charge_Type__c != oldCharge.Charge_Type__c) {
+                chargesWithTypeChanges.add(charge);
+            }
+        }
+        
+        if (!chargesWithTypeChanges.isEmpty()) {
+            // Reassign processing order for charges with type changes
+            LoanChargeService.assignProcessingOrder(chargesWithTypeChanges);
+        }
     }
     
     /**

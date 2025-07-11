@@ -49,7 +49,7 @@ private class LoanManagementTest {
         
         // Verify release charge was created
         List<Loan_Charge__c> releaseCharges = [
-            SELECT Id, Charge_Type__c, Amount__c, Date__c
+            SELECT Id, Charge_Type__c, Amount__c, Date__c, Processing_Order__c
             FROM Loan_Charge__c
             WHERE Loan__c = :testLoan.Id
             AND Charge_Type__c = 'Release Charge'
@@ -57,6 +57,7 @@ private class LoanManagementTest {
         
         System.assertEquals(1, releaseCharges.size(), 'Should have exactly one release charge');
         System.assertEquals(500.00, releaseCharges[0].Amount__c, 'Release charge should be £500');
+        System.assertEquals(4, releaseCharges[0].Processing_Order__c, 'Release charge should have processing order 4');
         
         Date expectedReleaseDate = Date.today().addMonths(12);
         System.assertEquals(expectedReleaseDate, releaseCharges[0].Date__c, 'Release date should be loan issue date + term');
@@ -91,13 +92,18 @@ private class LoanManagementTest {
         
         // Verify all loans have release charges
         List<Loan_Charge__c> releaseCharges = [
-            SELECT Id, Loan__c
+            SELECT Id, Loan__c, Processing_Order__c
             FROM Loan_Charge__c
             WHERE Loan__c IN :testLoans
             AND Charge_Type__c = 'Release Charge'
         ];
         
         System.assertEquals(200, releaseCharges.size(), 'Should have 200 release charges');
+        
+        // Verify all release charges have correct processing order
+        for (Loan_Charge__c charge : releaseCharges) {
+            System.assertEquals(4, charge.Processing_Order__c, 'All release charges should have processing order 4');
+        }
         
         // Verify loan balances
         List<Loan__c> updatedLoans = [
@@ -196,6 +202,14 @@ private class LoanManagementTest {
         
         Test.stopTest();
         
+        // Verify interest charge has correct processing order
+        Loan_Charge__c insertedInterestCharge = [
+            SELECT Id, Processing_Order__c
+            FROM Loan_Charge__c
+            WHERE Id = :interestCharge.Id
+        ];
+        System.assertEquals(3, insertedInterestCharge.Processing_Order__c, 'Interest charge should have processing order 3');
+        
         // Verify release charge date was extended by one month
         Loan_Charge__c updatedReleaseCharge = [
             SELECT Id, Date__c
@@ -265,7 +279,7 @@ private class LoanManagementTest {
         
         // Verify admin fee was created
         List<Loan_Charge__c> adminFees = [
-            SELECT Id, Amount__c, Date__c, Charge_Type__c
+            SELECT Id, Amount__c, Date__c, Charge_Type__c, Processing_Order__c
             FROM Loan_Charge__c
             WHERE Loan__c = :testLoan.Id
             AND Charge_Type__c = 'Admin Fee'
@@ -274,6 +288,7 @@ private class LoanManagementTest {
         System.assertEquals(1, adminFees.size(), 'Should have created one admin fee');
         System.assertEquals(300.00, adminFees[0].Amount__c, 'Admin fee should be £300');
         System.assertEquals(Date.today(), adminFees[0].Date__c, 'Admin fee date should be today');
+        System.assertEquals(1, adminFees[0].Processing_Order__c, 'Admin fee should have processing order 1');
         
         // Verify loan balance includes admin fee
         Loan__c updatedLoan = [
@@ -286,6 +301,124 @@ private class LoanManagementTest {
                            'Loan balance should include release charge and admin fee');
         System.assertEquals(800.00, updatedLoan.Total_Charges_on_the_Loan__c, 
                            'Total charges should be release charge + admin fee');
+    }
+    
+    /**
+     * @description Test processing order for charges on same date
+     */
+    @isTest
+    static void testProcessingOrderForSameDateCharges() {
+        Account testAccount = [SELECT Id FROM Account LIMIT 1];
+        
+        Loan__c testLoan = new Loan__c(
+            Name = 'Test Loan for Processing Order',
+            Account__c = testAccount.Id,
+            Gross_Loan_Amount__c = 100000.00,
+            Date_Loan_Issued__c = Date.today(),
+            Term__c = 12
+        );
+        insert testLoan;
+        
+        Date chargeDate = Date.today().addDays(30);
+        
+        Test.startTest();
+        
+        // Create multiple charges on the same date
+        List<Loan_Charge__c> sameDateCharges = new List<Loan_Charge__c>();
+        sameDateCharges.add(new Loan_Charge__c(
+            Loan__c = testLoan.Id,
+            Charge_Type__c = 'Interest Charge',
+            Amount__c = 500.00,
+            Date__c = chargeDate
+        ));
+        sameDateCharges.add(new Loan_Charge__c(
+            Loan__c = testLoan.Id,
+            Charge_Type__c = 'Admin Fee',
+            Amount__c = 300.00,
+            Date__c = chargeDate
+        ));
+        sameDateCharges.add(new Loan_Charge__c(
+            Loan__c = testLoan.Id,
+            Charge_Type__c = 'Legal Fee',
+            Amount__c = 750.00,
+            Date__c = chargeDate
+        ));
+        
+        insert sameDateCharges;
+        
+        Test.stopTest();
+        
+        // Verify processing orders are assigned correctly
+        List<Loan_Charge__c> insertedCharges = [
+            SELECT Id, Charge_Type__c, Processing_Order__c, Date__c
+            FROM Loan_Charge__c
+            WHERE Loan__c = :testLoan.Id
+            AND Date__c = :chargeDate
+            ORDER BY Processing_Order__c ASC
+        ];
+        
+        System.assertEquals(3, insertedCharges.size(), 'Should have 3 charges on the same date');
+        
+        // Verify correct processing order assignment
+        System.assertEquals('Admin Fee', insertedCharges[0].Charge_Type__c, 'Admin Fee should be first (order 1)');
+        System.assertEquals(1, insertedCharges[0].Processing_Order__c, 'Admin Fee should have order 1');
+        
+        System.assertEquals('Legal Fee', insertedCharges[1].Charge_Type__c, 'Legal Fee should be second (order 2)');
+        System.assertEquals(2, insertedCharges[1].Processing_Order__c, 'Legal Fee should have order 2');
+        
+        System.assertEquals('Interest Charge', insertedCharges[2].Charge_Type__c, 'Interest Charge should be third (order 3)');
+        System.assertEquals(3, insertedCharges[2].Processing_Order__c, 'Interest Charge should have order 3');
+    }
+    
+    /**
+     * @description Test charge type update affects processing order
+     */
+    @isTest
+    static void testChargeTypeUpdateProcessingOrder() {
+        Account testAccount = [SELECT Id FROM Account LIMIT 1];
+        
+        Loan__c testLoan = new Loan__c(
+            Name = 'Test Loan for Charge Type Update',
+            Account__c = testAccount.Id,
+            Gross_Loan_Amount__c = 75000.00,
+            Date_Loan_Issued__c = Date.today(),
+            Term__c = 6
+        );
+        insert testLoan;
+        
+        // Create an interest charge
+        Loan_Charge__c testCharge = new Loan_Charge__c(
+            Loan__c = testLoan.Id,
+            Charge_Type__c = 'Interest Charge',
+            Amount__c = 800.00,
+            Date__c = Date.today().addDays(15)
+        );
+        insert testCharge;
+        
+        // Verify initial processing order
+        Loan_Charge__c insertedCharge = [
+            SELECT Id, Processing_Order__c, Charge_Type__c
+            FROM Loan_Charge__c
+            WHERE Id = :testCharge.Id
+        ];
+        System.assertEquals(3, insertedCharge.Processing_Order__c, 'Interest Charge should have order 3');
+        
+        Test.startTest();
+        
+        // Update charge type to Admin Fee
+        testCharge.Charge_Type__c = 'Admin Fee';
+        update testCharge;
+        
+        Test.stopTest();
+        
+        // Verify processing order was updated
+        Loan_Charge__c updatedCharge = [
+            SELECT Id, Processing_Order__c, Charge_Type__c
+            FROM Loan_Charge__c
+            WHERE Id = :testCharge.Id
+        ];
+        System.assertEquals('Admin Fee', updatedCharge.Charge_Type__c, 'Charge type should be updated');
+        System.assertEquals(1, updatedCharge.Processing_Order__c, 'Admin Fee should have order 1');
     }
     
     /**
