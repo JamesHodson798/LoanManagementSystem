@@ -1,6 +1,8 @@
-/**
- * @description Service class for managing loan charges
- */
+/************************************************************************************************************************************
+ *  Date:   14July25
+ *  Author: James Hodson
+ *  Desc:   Class to make sure the loan charge has the correct priority and the release charge and admin charge are created properly.
+ * **********************************************************************************************************************************/
 public with sharing class LoanChargeService {
     
     private static final String RELEASE_CHARGE_TYPE = 'Release Charge';
@@ -18,10 +20,7 @@ public with sharing class LoanChargeService {
         RELEASE_CHARGE_TYPE => 4
     };
     
-    /**
-     * @description Assigns processing order to charges based on charge type
-     * @param charges List of loan charges to assign processing order
-     */
+    // Assigns processing order to charges based on charge type, otherwise set the default processing order. 
     public static void assignProcessingOrder(List<Loan_Charge__c> charges) {
         for (Loan_Charge__c charge : charges) {
             if (CHARGE_TYPE_PRIORITY.containsKey(charge.Charge_Type__c)) {
@@ -33,10 +32,7 @@ public with sharing class LoanChargeService {
         }
     }
     
-    /**
-     * @description Creates release charges for new loans
-     * @param loans List of Loan records
-     */
+    // Creates release charges for new loans based on the list of loan records.
     public static void createReleaseCharges(List<Loan__c> loans) {
         List<Loan_Charge__c> releaseCharges = new List<Loan_Charge__c>();
         
@@ -67,11 +63,7 @@ public with sharing class LoanChargeService {
         }
     }
     
-    /**
-     * @description Handles term changes for loans
-     * @param loansWithTermChanges List of loans with term changes
-     * @param oldLoanMap Map of old loan values
-     */
+    // Handles term changes for loans with the list of loans with term changes and a map of old loan values.
     public static void handleTermChanges(List<Loan__c> loansWithTermChanges, Map<Id, Loan__c> oldLoanMap) {
         Set<Id> loanIds = new Set<Id>();
         for (Loan__c loan : loansWithTermChanges) {
@@ -126,10 +118,7 @@ public with sharing class LoanChargeService {
         }
     }
     
-    /**
-     * @description Validates that only one release charge exists per loan
-     * @param newCharges List of new loan charges
-     */
+    // Validates that only one release charge exists per loan with the list of new loan charges.
     public static void validateReleaseCharges(List<Loan_Charge__c> newCharges) {
         Set<Id> loanIds = new Set<Id>();
         List<Loan_Charge__c> releaseCharges = new List<Loan_Charge__c>();
@@ -165,10 +154,7 @@ public with sharing class LoanChargeService {
         }
     }
     
-    /**
-     * @description Handles release charge date adjustments for new charges
-     * @param newCharges List of new loan charges
-     */
+    // Handles release charge date adjustments for new charges with the list of new loan charges.
     public static void handleReleaseChargeAdjustments(List<Loan_Charge__c> newCharges) {
         Set<Id> loanIds = new Set<Id>();
         List<Loan_Charge__c> nonReleaseCharges = new List<Loan_Charge__c>();

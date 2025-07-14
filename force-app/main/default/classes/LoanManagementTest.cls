@@ -1,14 +1,12 @@
-/**
- * @description Test class for Loan management functionality
- * @author Your Name
- * @date 2025
- */
+/***************************************************************************
+ *  Date:   14July25
+ *  Author: James Hodson
+ *  Desc:   Test class for Loan management functionality.
+ * *************************************************************************/
 @isTest
 private class LoanManagementTest {
     
-    /**
-     * @description Test data setup method
-     */
+    //Test data setup method.
     @TestSetup
     static void setupTestData() {
         // Create test account (Person Account would be ideal, but using standard account for simplicity)
@@ -19,9 +17,7 @@ private class LoanManagementTest {
         insert testAccount;
     }
     
-    /**
-     * @description Test creation of loan with automatic release charge
-     */
+    // Test creation of loan with automatic release charge.
     @isTest
     static void testLoanCreationWithReleaseCharge() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -67,9 +63,7 @@ private class LoanManagementTest {
         System.assertEquals(500.00, insertedLoan.Total_Charges_on_the_Loan__c, 'Total charges should equal release charge');
     }
     
-    /**
-     * @description Test bulk loan creation
-     */
+    // Test bulk loan creation
     @isTest
     static void testBulkLoanCreation() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -117,9 +111,7 @@ private class LoanManagementTest {
         }
     }
     
-    /**
-     * @description Test prevention of multiple release charges
-     */
+    // Test prevention of multiple release charges
     @isTest
     static void testPreventMultipleReleaseCharges() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -163,9 +155,7 @@ private class LoanManagementTest {
         System.assertEquals(1, releaseCharges.size(), 'Should still have exactly one release charge');
     }
     
-    /**
-     * @description Test adding new charges and release charge adjustment
-     */
+    // Test adding new charges and release charge adjustment
     @isTest
     static void testNewChargeAndReleaseChargeAdjustment() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -234,9 +224,7 @@ private class LoanManagementTest {
                            'Total charges should be release charge + interest charge');
     }
     
-    /**
-     * @description Test loan term modification and admin fee creation
-     */
+    // Test loan term modification and admin fee creation
     @isTest
     static void testLoanTermModification() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -303,9 +291,7 @@ private class LoanManagementTest {
                            'Total charges should be release charge + admin fee');
     }
     
-    /**
-     * @description Test processing order for charges on same date
-     */
+    // Test processing order for charges on same date
     @isTest
     static void testProcessingOrderForSameDateCharges() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -370,9 +356,7 @@ private class LoanManagementTest {
         System.assertEquals(3, insertedCharges[2].Processing_Order__c, 'Interest Charge should have order 3');
     }
     
-    /**
-     * @description Test charge type update affects processing order
-     */
+    // Test charge type update affects processing order
     @isTest
     static void testChargeTypeUpdateProcessingOrder() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -421,9 +405,7 @@ private class LoanManagementTest {
         System.assertEquals(1, updatedCharge.Processing_Order__c, 'Admin Fee should have order 1');
     }
     
-    /**
-     * @description Test charge deletion and balance recalculation
-     */
+    // Test charge deletion and balance recalculation
     @isTest
     static void testChargeDeleteAndBalanceRecalculation() {
         Account testAccount = [SELECT Id FROM Account LIMIT 1];
@@ -483,9 +465,7 @@ private class LoanManagementTest {
                            'Total charges should exclude deleted charge');
     }
     
-    /**
-     * @description Test error handling scenarios
-     */
+    // Test error handling scenarios 
     @isTest
     static void testErrorHandling() {
         Test.startTest();

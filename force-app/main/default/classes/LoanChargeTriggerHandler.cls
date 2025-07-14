@@ -1,14 +1,11 @@
-/**
- * @description Handler class for Loan_Charge__c triggers
- * @author Your Name
- * @date 2025
- */
+/***********************************************************************************************************
+ *  Date:   14July25
+ *  Author: James Hodson
+ *  Desc:   Handler class containing business logic for processing Loan Charge records.
+ * *********************************************************************************************************/
 public with sharing class LoanChargeTriggerHandler {
     
-    /**
-     * @description Handles before insert operations
-     * @param newCharges List of newly inserted Loan Charge records
-     */
+    // Before inserting, assign the processing order and validate the release charge.
     public static void handleBeforeInsert(List<Loan_Charge__c> newCharges) {
         // Assign processing order based on charge type
         LoanChargeService.assignProcessingOrder(newCharges);
@@ -17,11 +14,7 @@ public with sharing class LoanChargeTriggerHandler {
         LoanChargeService.validateReleaseCharges(newCharges);
     }
     
-    /**
-     * @description Handles before update operations
-     * @param newCharges List of updated Loan Charge records
-     * @param oldChargeMap Map of old Loan Charge records
-     */
+    // Before updating, check the processing order of the loan charge to make sure the Admin Fee is processed and applied before the Interest Charge.
     public static void handleBeforeUpdate(List<Loan_Charge__c> newCharges, Map<Id, Loan_Charge__c> oldChargeMap) {
         List<Loan_Charge__c> chargesWithTypeChanges = new List<Loan_Charge__c>();
         
@@ -39,20 +32,13 @@ public with sharing class LoanChargeTriggerHandler {
         }
     }
     
-    /**
-     * @description Handles after insert operations
-     * @param newCharges List of newly inserted Loan Charge records
-     */
+    // After insert, check if new charge date is on or after release charge date, extend release charge by one month and update loan balance.
     public static void handleAfterInsert(List<Loan_Charge__c> newCharges) {
         LoanChargeService.handleReleaseChargeAdjustments(newCharges);
         updateLoanBalancesFromCharges(newCharges);
     }
     
-    /**
-     * @description Handles after update operations
-     * @param newCharges List of updated Loan Charge records
-     * @param oldChargeMap Map of old Loan Charge records
-     */
+    // After update, check each new charge and check if it is the same as the old amount. If not update the loan balance.
     public static void handleAfterUpdate(List<Loan_Charge__c> newCharges, Map<Id, Loan_Charge__c> oldChargeMap) {
         List<Loan_Charge__c> chargesWithAmountChanges = new List<Loan_Charge__c>();
         
@@ -68,18 +54,12 @@ public with sharing class LoanChargeTriggerHandler {
         }
     }
     
-    /**
-     * @description Handles after delete operations
-     * @param deletedCharges List of deleted Loan Charge records
-     */
+    // Update the loan balance after a deleted loan charge.
     public static void handleAfterDelete(List<Loan_Charge__c> deletedCharges) {
         updateLoanBalancesFromCharges(deletedCharges);
     }
     
-    /**
-     * @description Updates loan balances when charges are modified
-     * @param charges List of loan charges that were modified
-     */
+    // Get the loan id's from the loan charges, if it is not empty, send the loans to update the balance. 
     private static void updateLoanBalancesFromCharges(List<Loan_Charge__c> charges) {
         Set<Id> loanIds = new Set<Id>();
         for (Loan_Charge__c charge : charges) {

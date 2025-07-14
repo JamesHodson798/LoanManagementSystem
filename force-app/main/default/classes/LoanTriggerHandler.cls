@@ -1,24 +1,17 @@
-/**
- * @description Handler class for Loan__c triggers
- * @author Your Name
- * @date 2025
- */
+/***************************************************************************
+ *  Date:   14July25
+ *  Author: James Hodson
+ *  Desc:   Handler class for the Loan triggers.
+ * *************************************************************************/
 public with sharing class LoanTriggerHandler {
     
-    /**
-     * @description Handles after insert operations
-     * @param newLoans List of newly inserted Loan records
-     */
+    // Handles after insert operations on new loans to make sure the release charge is added and the loan balance is correct.
     public static void handleAfterInsert(List<Loan__c> newLoans) {
         LoanChargeService.createReleaseCharges(newLoans);
         LoanBalanceService.updateLoanBalances(newLoans);
     }
     
-    /**
-     * @description Handles after update operations
-     * @param newLoans List of updated Loan records
-     * @param oldLoanMap Map of old Loan records
-     */
+    // Handles after update operations of updated Loan records to check changes in the term. If so add the admin fee.
     public static void handleAfterUpdate(List<Loan__c> newLoans, Map<Id, Loan__c> oldLoanMap) {
         List<Loan__c> loansWithTermChanges = new List<Loan__c>();
         

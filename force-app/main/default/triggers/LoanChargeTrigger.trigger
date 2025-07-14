@@ -1,7 +1,8 @@
-/**
- * LoanChargeTrigger.trigger
- * @description Trigger for Loan_Charge__c object
- */
+/***********************************************************************************************************
+ *  Date:   14July25
+ *  Author: James Hodson
+ *  Desc:   Intercepts database operations on the Loan Charge obejct and calls the LoanChargeTriggerHandler.
+ * *********************************************************************************************************/
 trigger LoanChargeTrigger on Loan_Charge__c (before insert, before update, after insert, after update, after delete) {
     
     if (Trigger.isBefore) {

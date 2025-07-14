@@ -1,7 +1,8 @@
-/**
- * LoanTrigger.trigger
- * @description Trigger for Loan__c object
- */
+/*********************************************************************************************
+ *  Date:   14July25
+ *  Author: James Hodson
+ *  Desc:   Intercepts database operations on the Loan obejct and calls the LoanTriggerHandler.
+ * *******************************************************************************************/
 trigger LoanTrigger on Loan__c (after insert, after update) {
     
     if (Trigger.isAfter) {

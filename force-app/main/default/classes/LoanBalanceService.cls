@@ -1,12 +1,11 @@
-/**
- * @description Service class for managing loan balance calculations
- */
+/***************************************************************************
+ *  Date:   14July25
+ *  Author: James Hodson
+ *  Desc:   Update the loan balance with the new changes to the loan charges.
+ * *************************************************************************/
 public with sharing class LoanBalanceService {
     
-    /**
-     * @description Updates the current loan balance for given loans
-     * @param loans List of Loan records to update
-     */
+    // Updates the current loan balance for given loans with the list of Loan records to update.
     public static void updateLoanBalances(List<Loan__c> loans) {
         if (loans.isEmpty()) return;
         
@@ -85,8 +84,6 @@ public with sharing class LoanBalanceService {
         }
     }
     
-    /**
-     * @description Custom exception for loan balance operations
-     */
+    // Custom exception for loan balance operations.
     public class LoanBalanceException extends Exception {}
 }
