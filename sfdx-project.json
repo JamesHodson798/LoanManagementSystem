@@ -1,0 +1,20 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "LoanManagementSystem",
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "versionDescription": "App to track loans and loan charges"
+    }
+  ],
+  "name": "Loan Management System",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "64.0",
+  "packageAliases": {
+    "LoanManagementSystem": "0HoN1000000057lKAA",
+    "LoanManagementSystem@0.1.0-1": "04tN1000004c72zIAA"
+  }
+}

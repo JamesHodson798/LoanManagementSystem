@@ -1,0 +1,13 @@
+{
+  "orgName": "Loan Management System", 
+  "edition": "Developer",
+  "features": ["PersonAccounts"],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "chatterSettings": {
+      "enableChatter": true
+    }
+  }
+}
